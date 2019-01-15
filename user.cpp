@@ -32,7 +32,7 @@ double User::getSale(){
     return sale;
 }
 int User::getCount(){
-    return sale;
+    return count;
 }
 
 //MODIFIED GUNCTIONS
@@ -41,6 +41,7 @@ void User::increaseCount(){
 }
 void User::decreaseCount(){
     count--;
+    cout<<count<<endl;
 	saleCounts++;
 }
 void User::setCount(int num){
@@ -48,4 +49,7 @@ void User::setCount(int num){
 }
 double User::calSaleProfits(){
 	return (sale - price) * saleCounts;
+}
+double User::calSaleProfitsPersentage(){
+    return ((sale - price) * saleCounts) / price * 100;
 }

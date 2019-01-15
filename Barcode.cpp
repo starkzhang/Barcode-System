@@ -27,11 +27,11 @@ int main(int argc, char* argv[]) {
 	double pPrice;
     double sPrice;
 	string productName;
-	int ioChoice;
-    int newChoice;
+	string ioChoice;
+    string newChoice;
     int pCount = 0;
     int pID = -1;
-    int didNotMatch;
+    string didNotMatch;
     int indexOfList;
 	vector<string> barVector;
 	vector<User> productsList = readProducts("test.txt");
@@ -48,16 +48,16 @@ int main(int argc, char* argv[]) {
 	cout << "Enter 2 for output products" << endl;
     cout << "Enter any other key to exist the program" << endl;
 	cin >> ioChoice;
-    while(ioChoice != -1){
-        if (ioChoice == 1) {
+    while(ioChoice.compare("1")== 0 || ioChoice.compare("2")== 0){
+        if (ioChoice.compare("1")== 0) {
             cout << "Enter 1 for a new products" << endl;
             cout << "Enter 2 for increase count of exsit product"<<endl;
-            cout << "Enter -1 to exit the program"<<endl;
+            cout << "Enter any keys to exit the program"<<endl;
             cin>>newChoice;
-            if(newChoice == -1){
+            if(newChoice.compare("-1") == 0){
                 break;
             }
-            if(newChoice == 1){
+            if(newChoice.compare("1")==0){
                 do{
                     cout << "Please enter the new items start with barcode" << endl;
                    
@@ -75,62 +75,75 @@ int main(int argc, char* argv[]) {
                     productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount));
                     cout << "Continuing entering new products?(enter 1 to continue, enter 2 to increase count of exsit product)" << endl;
                     cin >> newChoice;
-                    if(newChoice != 1 && newChoice != 2){
+                    if(newChoice.compare("1")!=0 && newChoice.compare("2")!=0){
                     	
                     	do{
                     		cout<<"Wrong input!"<<endl;
                     		cout<<"Please enter 1 to continue, enter 2 to increase count of exsit product, enter -1 to end program"<<endl;
                     		cin >> newChoice;
-                    	}while(newChoice != 1 || newChoice != 2 || newChoice != -1);
+                    	}while(newChoice.compare("1")!=0 || newChoice.compare("2")!=0 || newChoice.compare("-1")!=0);
                     }
-                }while(newChoice == 1);
-                cout << newChoice<<endl;
+                }while(newChoice.compare("1")==0);
+
             }
 
-            if(newChoice == 2){
+            if(newChoice.compare("2")==0){
 				do{
-					cout << "Please enter the barcode (Enter -1 to exit)" << endl;
+					cout << "Please enter the barcode (Enter 'q' back to the main manu)" << endl;
 					cin>>barCode;
+                    if(!isdigit(barCode[0])){
+                        break;
+                    }
 					indexOfList = barCodeMatch(barCode,productsList);
 					if(indexOfList==-1){
 						cout<<"Did not match the barcode in the system, do you want to add a new item?(Please enter 0 for add a new item, other key for continue scanning)"<<endl;
 						cin >> didNotMatch;
-						if(didNotMatch == 0){
+						if(didNotMatch.compare("0") == 0){
 							break;
 						}
 					}
 					else{
 						productsList[indexOfList].increaseCount();
 					}
-				}while(didNotMatch != 0 || barCode.compare("-1"));
+				}while(didNotMatch.compare("0") != 0);
             }
-            // printUser(productsList);
+            
         }
-		else if(ioChoice == 2){
+		else if(ioChoice.compare("2")== 0){
 			do{
-				cout << "Please enter a barcode to decrease a product in the system"<<endl;
+                printUser(productsList);
+				cout << "Please enter a barcode to decrease a product in the system(Enter 'q' back to the main manu)"<<endl;
 				cin >> barCode;
+                if(!isdigit(barCode[0])){
+                    break;
+                }
 				indexOfList = barCodeMatch(barCode,productsList);
+
 				if(indexOfList == -1){
 					cout<<"Did not match the barcode in the system, do you want to add a new item?(Please enter 0 for add a new item, other key for continue scanning)"<<endl;
 					cin >> didNotMatch;
-					if(didNotMatch == 0){
+					if(didNotMatch.compare("0") == 0){
 						break;
 					}
+                    else {
+                        continue;
+                    }
 				}
 				else{
-						if(productsList[indexOfList].getCount() < 0){
+                    
+						if(productsList[indexOfList].getCount() <= 0){
 							cout<<"You do not have any products left in your stock"<<endl;
+                            productsList[indexOfList].setCount(0);
 							break;
 						}
 						productsList[indexOfList].decreaseCount();
 					}
-			}while(didNotMatch != 0 || barCode.compare("-1"));
+			}while(didNotMatch.compare("0") != 0);
 		}
 		cout << "Please choice the floowing options" << endl;
 		cout << "Enter 1 for input products" << endl;
 		cout << "Enter 2 for output products" << endl;
-    	cout << "Enter -1 to exist the program" << endl;
+    	cout << "Enter any other keys to exist the program" << endl;
 		cin >> ioChoice;
     }
 	cout<<"Write the products out to test.txt"<<endl;
@@ -155,6 +168,7 @@ vector<User> readProducts(const char* filename){
     int productCount;
     vector<User> listOfProducts;
     inFile>>numUsers;
+    cout<<numUsers<<endl;
     int hardCount = 0;
     //Until the EOF, read through the input file
     do{
@@ -169,20 +183,28 @@ vector<User> readProducts(const char* filename){
         for (int j = 0; j < numUsers; j++) {
             //Read UserID
             inFile>>productID;
+ 
             inFile>>bCode;
+
             //Read User name
             inFile>>productName;
+
             //Read User product Price
             inFile>>productPrice;
+
             
             //Read User sales Price
             inFile>>salesPrice;
+
             //Read user's friends
             inFile>>productCount;
+
             
             listOfProducts.push_back(User(productID,bCode,productName,productPrice,salesPrice,productCount));
+            hardCount++;
         }
-        hardCount++;
+        
+       
         //EOF check
     }while(!inFile.fail());
     inFile.close();
@@ -190,9 +212,11 @@ vector<User> readProducts(const char* filename){
 }
 void writeProducts(const char* filename, vector<User> v){
 	ofstream outFile(filename);
+    outFile << (signed)v.size() <<endl;
     for(int i = 0 ; i < (signed)v.size(); i ++){
-        outFile << v[i].getID() << ": " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
-                << v[i].getPrice() << " " << v[i].getSale() << " " << v[i].getCount() << endl;
+        
+        outFile << v[i].getID() << " " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
+                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount() << endl;
     }
     
     outFile.close();
@@ -204,10 +228,16 @@ void printUser(vector<User> v){
 }
 //return index found -1 not found.
 int barCodeMatch(string b, vector<User> v){
+
     for(int i = 0 ; i < (signed)v.size();i++){
-        if(b.compare(v[i].getName())==0){
+        
+        
+        
+        if(b.compare(v[i].getBCODE())==0){
+
             return i;
         }
+        
     }
-    return 0;
+    return -1;
 }
