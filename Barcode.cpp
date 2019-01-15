@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 using namespace std;
 
 // compile: g++ {user,network,test_shortest_path}.cpp -o test_shortest_path
@@ -19,6 +20,7 @@ using namespace std;
 vector<User> readProducts(const char* filename);
 void printUser(vector<User> v);
 int barCodeMatch(string b, vector<User> v);
+void writeProducts(const char* filename, vector<User> v);
 int main(int argc, char* argv[]) {
 	string skipNewItem;
 	string barCode;
@@ -90,7 +92,7 @@ int main(int argc, char* argv[]) {
 					else{
 						productsList[indexOfList].increaseCount();
 					}
-				}while(didNotMatch != 0 || barCode != -1);
+				}while(didNotMatch != 0 || barCode.compare("-1"));
             }
             // printUser(productsList);
         }
@@ -113,11 +115,11 @@ int main(int argc, char* argv[]) {
 						}
 						productsList[indexOfList].decreaseCount();
 					}
-			}while(didNotMatch != 0 || barCode != -1);
+			}while(didNotMatch != 0 || barCode.compare("-1"));
 		}
     }
 	cout<<"Write the products out to test.txt"<<endl;
-	
+	writeProducts("test.txt", productsList);
     cout<<"Thank you for using the program"<<endl;
     cout<<"Bye-bye"<<endl;
     cout<<"Stark"<<endl;
@@ -171,8 +173,14 @@ vector<User> readProducts(const char* filename){
     inFile.close();
     return listOfProducts;
 }
-vector<User> readProducts(const char* filename){
-	
+void writeProducts(const char* filename, vector<User> v){
+	ofstream outFile(filename);
+    for(int i = 0 ; i < (signed)v.size(); i ++){
+        outFile << v[i].getID() << ": " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
+                << v[i].getPrice() << " " << v[i].getSale() << " " << v[i].getCount() << endl;
+    }
+    
+    outFile.close();
 }
 void printUser(vector<User> v){
     for(int i = 0 ; i < (signed)v.size();i++){
