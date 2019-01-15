@@ -44,9 +44,9 @@ int main(int argc, char* argv[]) {
 	//MAIN MANUE
     
 	cout << "Please choice the floowing options" << endl;
-	cout << "Choose 1 for input products" << endl;
-	cout << "Choose 2 for output products" << endl;
-    cout << "Choose any other key to exist the program" << endl;
+	cout << "Enter 1 for input products" << endl;
+	cout << "Enter 2 for output products" << endl;
+    cout << "Enter any other key to exist the program" << endl;
 	cin >> ioChoice;
     while(ioChoice != -1){
         if (ioChoice == 1) {
@@ -73,11 +73,21 @@ int main(int argc, char* argv[]) {
                     cin >> pCount;
                     
                     productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount));
-                    cout << "Continuing entering new products?(enter 1 to continue, other keys to back to the prvious manu)" << endl;
+                    cout << "Continuing entering new products?(enter 1 to continue, enter 2 to increase count of exsit product)" << endl;
                     cin >> newChoice;
+                    if(newChoice != 1 && newChoice != 2){
+                    	
+                    	do{
+                    		cout<<"Wrong input!"<<endl;
+                    		cout<<"Please enter 1 to continue, enter 2 to increase count of exsit product, enter -1 to end program"<<endl;
+                    		cin >> newChoice;
+                    	}while(newChoice != 1 || newChoice != 2 || newChoice != -1);
+                    }
                 }while(newChoice == 1);
+                cout << newChoice<<endl;
             }
-            else if(newChoice == 2){
+
+            if(newChoice == 2){
 				do{
 					cout << "Please enter the barcode (Enter -1 to exit)" << endl;
 					cin>>barCode;
@@ -117,6 +127,11 @@ int main(int argc, char* argv[]) {
 					}
 			}while(didNotMatch != 0 || barCode.compare("-1"));
 		}
+		cout << "Please choice the floowing options" << endl;
+		cout << "Enter 1 for input products" << endl;
+		cout << "Enter 2 for output products" << endl;
+    	cout << "Enter -1 to exist the program" << endl;
+		cin >> ioChoice;
     }
 	cout<<"Write the products out to test.txt"<<endl;
 	writeProducts("test.txt", productsList);
