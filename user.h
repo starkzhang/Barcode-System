@@ -20,12 +20,16 @@ class User {
     double getPrice();
     double getSale();
     int getCount();
+    double getProfits();
     
     //MODIFIED FUNCTIONS
     void increaseCount();
     void decreaseCount();
     void setCount(int num);
+    void setProfits(double p);
+    void setPersentage(double p);
     double calSaleProfits();
+    double calSaleProfitsPersentage();
  private:
     
     int id;
@@ -35,6 +39,8 @@ class User {
     double sale;
     int count;
 	int saleCounts;
+    double profits;
+    double persentage;
 };
 
 

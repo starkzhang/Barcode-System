@@ -146,8 +146,27 @@ int main(int argc, char* argv[]) {
     	cout << "Enter any other keys to exist the program" << endl;
 		cin >> ioChoice;
     }
-	cout<<"Write the products out to test.txt"<<endl;
+	cout<<"Write the products infomation out to test.txt"<<endl;
 	writeProducts("test.txt", productsList);
+    
+    cout<<"Do you want to write the profits to profits.txt? (yes or no)"<<endl;
+    cin>>ioChoice;
+    transform(ioChoice.begin(), ioChoice.end(), ioChoice.begin(), ::tolower);
+    
+    do{
+        if(ioChoice.compare("yes") == 0){
+            
+        }
+        else if(ioChoice.compare("no") == 0){
+            cout << "No data writing into profits.txt"<<endl;
+        }
+        else{
+            cout << "Please enter yes for write the profits to text file, otherwise enter no (enter any other keys to end program)"<<endl;
+            cin>>ioChoice;
+            transform(ioChoice.begin(), ioChoice.end(), ioChoice.begin(), ::tolower); 
+        }
+    }while(ioChoice.compare("yes") != 0 && ioChoice.compare("no") != 0 );
+    
     cout<<"Thank you for using the program"<<endl;
     cout<<"Bye-bye"<<endl;
     cout<<"Stark"<<endl;
@@ -221,6 +240,9 @@ void writeProducts(const char* filename, vector<User> v){
     
     outFile.close();
 }
+void writeOtherData(const char* filename, vector<User> v){
+    
+}
 void printUser(vector<User> v){
     for(int i = 0 ; i < (signed)v.size();i++){
         cout<<"ID: "<<v[i].getID()<<" BarCode: "<<v[i].getBCODE()<<" Name: "<<v[i].getName()<<" Price: "<<v[i].getPrice()<<" Sale: " <<v[i].getSale()<<" Count: "<<v[i].getCount()<<endl;
@@ -240,4 +262,33 @@ int barCodeMatch(string b, vector<User> v){
         
     }
     return -1;
+}
+
+double getProfitsForTotalProducts (vector<User> v){
+    double sum = 0.0;
+    for(int i = 0 ; i < (signed)v.size() ; i++){
+        v[i].setProfits(v[i].calSaleProfits());
+        sum += v[i].calSaleProfits();
+    }
+    return sum;
+}
+
+double getPersentageForTotalProducts (vector<User> v){
+    double persen = 0.0;
+    double total = 0.0;
+    for(int i = 0 ; i < (signed)v.size() ; i++){
+        v[i].setPersentage(v[i].calSaleProfitsPersentage());
+        sum += v[i].calSaleProfits();
+        
+    }
+    return sum;
+}
+
+//Helper Functions
+double totalProfits(vector<User> v){
+    int total = 0.0;
+    for(int i = 0 ; i < (signed)v.size() ; i++){
+        sum += v[i].getProfits();
+    }
+    return sum;
 }

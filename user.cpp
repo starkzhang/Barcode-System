@@ -10,6 +10,8 @@ User::User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COU
     sale = SALE;
     count = COUNT;
 	saleCounts = 0;
+    profits = 0.0;
+    persentage = 0.0;
 }
 
 //GET FUNCTIONS
@@ -34,6 +36,9 @@ double User::getSale(){
 int User::getCount(){
     return count;
 }
+double User::getProfits(){
+    return profits;
+}
 
 //MODIFIED GUNCTIONS
 void User::increaseCount(){
@@ -46,6 +51,12 @@ void User::decreaseCount(){
 }
 void User::setCount(int num){
     count = num;
+}
+void User::setProfits(double p){
+    profits = p;
+}
+void User::setPersentage(double p){
+    persentage = p;
 }
 double User::calSaleProfits(){
 	return (sale - price) * saleCounts;
