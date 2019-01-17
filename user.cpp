@@ -40,6 +40,10 @@ double User::getProfits(){
     return profits;
 }
 
+double User::getPersentage(){
+    return persentage;
+}
+
 //MODIFIED GUNCTIONS
 void User::increaseCount(){
     count++;

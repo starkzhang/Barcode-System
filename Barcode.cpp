@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <algorithm>
 using namespace std;
 
 // compile: g++ {user,network,test_shortest_path}.cpp -o test_shortest_path
@@ -20,7 +21,13 @@ using namespace std;
 vector<User> readProducts(const char* filename);
 void printUser(vector<User> v);
 int barCodeMatch(string b, vector<User> v);
+double totalPrice (vector<User> v);
+int totalCount (vector<User> v);
+double getProfitsForTotalProducts (vector<User> v);
+double getPersentageForTotalProducts (vector<User> v);
 void writeProducts(const char* filename, vector<User> v);
+void writeOtherData(const char* filename, vector<User> v);
+// void replaceWhiteSpace (string s);
 int main(int argc, char* argv[]) {
 	string skipNewItem;
 	string barCode;
@@ -65,6 +72,7 @@ int main(int argc, char* argv[]) {
                     cin >> barCode;
                     cout << "Please enter name of the Product" << endl;
                     cin >> productName;
+                    productName.replace( productName.begin(), productName.end(), ' ', '_' );
                     cout << "Please enter the price of the Product" << endl;
                     cin >> pPrice;
                     cout << "Please enter the sales price of the Product" << endl;
@@ -155,7 +163,7 @@ int main(int argc, char* argv[]) {
     
     do{
         if(ioChoice.compare("yes") == 0){
-            
+            writeOtherData("Profits.txt", productsList);
         }
         else if(ioChoice.compare("no") == 0){
             cout << "No data writing into profits.txt"<<endl;
@@ -241,7 +249,17 @@ void writeProducts(const char* filename, vector<User> v){
     outFile.close();
 }
 void writeOtherData(const char* filename, vector<User> v){
+    ofstream outFile(filename);
+    double totalProfits = getProfitsForTotalProducts (v);
+    double totalPersentage = getPersentageForTotalProducts (v);
     
+    for(int i = 0 ; i < (signed)v.size(); i ++){
+        outFile << v[i].getID() << " " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
+                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount()
+                << setw(8) << left << v[i].getProfits() << setw(8) << left << v[i].getPersentage() << endl;
+    }
+    outFile << "Total Profits: " <<totalProfits<<endl;
+    outFile << "Total Persentage: " <<totalPersentage<<endl;
 }
 void printUser(vector<User> v){
     for(int i = 0 ; i < (signed)v.size();i++){
@@ -275,20 +293,34 @@ double getProfitsForTotalProducts (vector<User> v){
 
 double getPersentageForTotalProducts (vector<User> v){
     double persen = 0.0;
-    double total = 0.0;
+    
     for(int i = 0 ; i < (signed)v.size() ; i++){
         v[i].setPersentage(v[i].calSaleProfitsPersentage());
-        sum += v[i].calSaleProfits();
-        
     }
-    return sum;
+    persen = getProfitsForTotalProducts (v) * totalCount(v) /  totalPrice(v) * 100;
+    return persen;
 }
 
 //Helper Functions
-double totalProfits(vector<User> v){
-    int total = 0.0;
+int totalCount (vector<User> v){
+    int sumCount = 0;
     for(int i = 0 ; i < (signed)v.size() ; i++){
-        sum += v[i].getProfits();
+        
+        sumCount += v[i].getCount();
     }
-    return sum;
+    return sumCount;
 }
+double totalPrice (vector<User> v){
+    double totalP = 0.0;
+    for(int i = 0 ; i < (signed)v.size() ; i++){
+        totalP += v[i].getPrice();
+    }
+    return totalP;
+}
+// void replaceWhiteSpace (string s){
+    // for(int i = 0 ; i < (signed)s.size();i++){
+        // if(s[i] == ' '){
+            // s[i] = "_";
+        // }
+    // }
+// }

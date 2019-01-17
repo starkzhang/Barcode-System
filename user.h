@@ -21,6 +21,7 @@ class User {
     double getSale();
     int getCount();
     double getProfits();
+    double getPersentage();
     
     //MODIFIED FUNCTIONS
     void increaseCount();
