@@ -27,7 +27,7 @@ double getProfitsForTotalProducts (vector<User> v);
 double getPersentageForTotalProducts (vector<User> v);
 void writeProducts(const char* filename, vector<User> v);
 void writeOtherData(const char* filename, vector<User> v);
-// void replaceWhiteSpace (string s);
+string replaceWhiteSpace (string text);
 int main(int argc, char* argv[]) {
 	string skipNewItem;
 	string barCode;
@@ -71,8 +71,11 @@ int main(int argc, char* argv[]) {
                     cout << "Please enter BarCode" << endl;
                     cin >> barCode;
                     cout << "Please enter name of the Product" << endl;
-                    cin >> productName;
-                    productName.replace( productName.begin(), productName.end(), ' ', '_' );
+                    cin.ignore(); 
+                    getline(cin, productName);
+                    cout << productName<<endl;
+                    replaceWhiteSpace(productName);
+                    cout << productName<<endl;
                     cout << "Please enter the price of the Product" << endl;
                     cin >> pPrice;
                     cout << "Please enter the sales price of the Product" << endl;
@@ -80,7 +83,7 @@ int main(int argc, char* argv[]) {
                     cout << "Do you know how many products you have? (if you do not know enter 0)"<<endl;
                     cin >> pCount;
                     
-                    productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount));
+                    productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount,0));
                     cout << "Continuing entering new products?(enter 1 to continue, enter 2 to increase count of exsit product)" << endl;
                     cin >> newChoice;
                     if(newChoice.compare("1")!=0 && newChoice.compare("2")!=0){
@@ -89,7 +92,7 @@ int main(int argc, char* argv[]) {
                     		cout<<"Wrong input!"<<endl;
                     		cout<<"Please enter 1 to continue, enter 2 to increase count of exsit product, enter -1 to end program"<<endl;
                     		cin >> newChoice;
-                    	}while(newChoice.compare("1")!=0 || newChoice.compare("2")!=0 || newChoice.compare("-1")!=0);
+                    	}while(newChoice.compare("1")!=0 && newChoice.compare("2")!=0 && newChoice.compare("-1")!=0);
                     }
                 }while(newChoice.compare("1")==0);
 
@@ -193,6 +196,7 @@ vector<User> readProducts(const char* filename){
     double salesPrice;
     string bCode;
     int productCount;
+    int saleCounts;
     vector<User> listOfProducts;
     inFile>>numUsers;
     cout<<numUsers<<endl;
@@ -225,9 +229,11 @@ vector<User> readProducts(const char* filename){
 
             //Read user's friends
             inFile>>productCount;
+            
+            inFile>>saleCounts;
 
             
-            listOfProducts.push_back(User(productID,bCode,productName,productPrice,salesPrice,productCount));
+            listOfProducts.push_back(User(productID,bCode,productName,productPrice,salesPrice,productCount,saleCounts));
             hardCount++;
         }
         
@@ -243,7 +249,7 @@ void writeProducts(const char* filename, vector<User> v){
     for(int i = 0 ; i < (signed)v.size(); i ++){
         
         outFile << v[i].getID() << " " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
-                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount() << endl;
+                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount()<< setw(5) << left << v[i].getSaleCounts() << endl;
     }
     
     outFile.close();
@@ -263,7 +269,8 @@ void writeOtherData(const char* filename, vector<User> v){
 }
 void printUser(vector<User> v){
     for(int i = 0 ; i < (signed)v.size();i++){
-        cout<<"ID: "<<v[i].getID()<<" BarCode: "<<v[i].getBCODE()<<" Name: "<<v[i].getName()<<" Price: "<<v[i].getPrice()<<" Sale: " <<v[i].getSale()<<" Count: "<<v[i].getCount()<<endl;
+        cout<<"ID: "<<v[i].getID()<<" BarCode: "<<v[i].getBCODE()<<" Name: "<<v[i].getName()<<" Price: "<<v[i].getPrice()<<" Sale: " <<v[i].getSale()<<" Count: "<<v[i].getCount()
+        <<" Profits: "<<v[i].getProfits()<<" Persentage: "<<v[i].getPersentage()<<endl;
     }
 }
 //return index found -1 not found.
@@ -287,6 +294,8 @@ double getProfitsForTotalProducts (vector<User> v){
     for(int i = 0 ; i < (signed)v.size() ; i++){
         v[i].setProfits(v[i].calSaleProfits());
         sum += v[i].calSaleProfits();
+        cout<<"1"<<endl;
+        printUser(v);
     }
     return sum;
 }
@@ -296,6 +305,8 @@ double getPersentageForTotalProducts (vector<User> v){
     
     for(int i = 0 ; i < (signed)v.size() ; i++){
         v[i].setPersentage(v[i].calSaleProfitsPersentage());
+        cout<<"2"<<endl;
+        printUser(v);
     }
     persen = getProfitsForTotalProducts (v) * totalCount(v) /  totalPrice(v) * 100;
     return persen;
@@ -317,10 +328,11 @@ double totalPrice (vector<User> v){
     }
     return totalP;
 }
-// void replaceWhiteSpace (string s){
-    // for(int i = 0 ; i < (signed)s.size();i++){
-        // if(s[i] == ' '){
-            // s[i] = "_";
-        // }
-    // }
-// }
+string replaceWhiteSpace (string text){
+    for(int i = 0; i < (signed)text.length(); i++)
+    {
+        if( isspace(text[i]) )
+           text[i] = '_';
+    }
+    return text;
+}
