@@ -9,7 +9,7 @@ using namespace std;
 class User {
  public:
     //Constructors
-    User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COUNT, int SALECOUNTS);
+    User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COUNT, int SALECOUNTS, double PROFITS, double PERSENTAGE);
 //    User();
     //Deconstructor
     //~User();

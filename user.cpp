@@ -1,7 +1,7 @@
 #include "user.h"
 
 //Constructor
-User::User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COUNT, int SALECOUNTS)
+User::User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COUNT, int SALECOUNTS, double PROFITS, double PERSENTAGE)
 {
     id = ID;
     bcode = BCODE;
@@ -10,8 +10,8 @@ User::User(int ID, string BCODE, string NAME, double PRICE, double SALE, int COU
     sale = SALE;
     count = COUNT;
 	saleCounts = SALECOUNTS;
-    profits = 0.0;
-    persentage = 0.0;
+    profits = PROFITS;
+    persentage = PERSENTAGE;
 }
 
 //GET FUNCTIONS
@@ -66,9 +66,10 @@ void User::setPersentage(double p){
     persentage = p;
 }
 double User::calSaleProfits(){
-    
+    setProfits(sale - price);
 	return (sale - price) * saleCounts;
 }
 double User::calSaleProfitsPersentage(){
-    return ((sale - price) * saleCounts) / price * 100;
+    setPersentage(profits/price*100.0);
+    return ((sale - price) * (double)saleCounts) / price * 100.0;
 }

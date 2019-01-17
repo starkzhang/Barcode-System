@@ -22,9 +22,9 @@ vector<User> readProducts(const char* filename);
 void printUser(vector<User> v);
 int barCodeMatch(string b, vector<User> v);
 double totalPrice (vector<User> v);
-int totalCount (vector<User> v);
+int totalSold (vector<User> v);
 double getProfitsForTotalProducts (vector<User> v);
-double getPersentageForTotalProducts (vector<User> v);
+double getPersentageForTotalProducts (vector<User> v, double tProducts);
 void writeProducts(const char* filename, vector<User> v);
 void writeOtherData(const char* filename, vector<User> v);
 string replaceWhiteSpace (string text);
@@ -37,6 +37,8 @@ int main(int argc, char* argv[]) {
 	string ioChoice;
     string newChoice;
     int pCount = 0;
+    double pProfits = 0.0;
+    double pPersentage = 0.0;
     int pID = -1;
     string didNotMatch;
     int indexOfList;
@@ -82,15 +84,16 @@ int main(int argc, char* argv[]) {
                     cin >> sPrice;
                     cout << "Do you know how many products you have? (if you do not know enter 0)"<<endl;
                     cin >> pCount;
-                    
-                    productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount,0));
+                    pProfits = sPrice - pPrice;
+                    pPersentage = pProfits / pPrice * 100;
+                    productsList.push_back(User(pID, barCode, productName, pPrice,sPrice, pCount, 0, pProfits, pPersentage));
                     cout << "Continuing entering new products?(enter 1 to continue, enter 2 to increase count of exsit product)" << endl;
                     cin >> newChoice;
                     if(newChoice.compare("1")!=0 && newChoice.compare("2")!=0){
                     	
                     	do{
                     		cout<<"Wrong input!"<<endl;
-                    		cout<<"Please enter 1 to continue, enter 2 to increase count of exsit product, enter -1 to end program"<<endl;
+                    		cout<<"Please enter 1 to continue, enter 2 to increase count of exsit product, enter -1 to back to main manu"<<endl;
                     		cin >> newChoice;
                     	}while(newChoice.compare("1")!=0 && newChoice.compare("2")!=0 && newChoice.compare("-1")!=0);
                     }
@@ -197,6 +200,8 @@ vector<User> readProducts(const char* filename){
     string bCode;
     int productCount;
     int saleCounts;
+    double profits;
+    double persentage;
     vector<User> listOfProducts;
     inFile>>numUsers;
     cout<<numUsers<<endl;
@@ -231,9 +236,12 @@ vector<User> readProducts(const char* filename){
             inFile>>productCount;
             
             inFile>>saleCounts;
+            
+            inFile>>profits;
+            inFile>>persentage;
 
             
-            listOfProducts.push_back(User(productID,bCode,productName,productPrice,salesPrice,productCount,saleCounts));
+            listOfProducts.push_back(User(productID,bCode,productName,productPrice,salesPrice,productCount,saleCounts,profits,persentage));
             hardCount++;
         }
         
@@ -249,7 +257,8 @@ void writeProducts(const char* filename, vector<User> v){
     for(int i = 0 ; i < (signed)v.size(); i ++){
         
         outFile << v[i].getID() << " " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
-                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount()<< setw(5) << left << v[i].getSaleCounts() << endl;
+                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount()
+                << setw(5) << left << v[i].getSaleCounts() << setw(5) << left<<v[i].getProfits()<< setw(7) << left << v[i].getPersentage()<<endl;
     }
     
     outFile.close();
@@ -257,15 +266,15 @@ void writeProducts(const char* filename, vector<User> v){
 void writeOtherData(const char* filename, vector<User> v){
     ofstream outFile(filename);
     double totalProfits = getProfitsForTotalProducts (v);
-    double totalPersentage = getPersentageForTotalProducts (v);
+    double totalPersentage = getPersentageForTotalProducts (v,totalProfits);
     
     for(int i = 0 ; i < (signed)v.size(); i ++){
-        outFile << v[i].getID() << " " << setw(14) << left << v[i].getBCODE() << setw(20) << left << v[i].getName()
-                << setw(5) << left << v[i].getPrice() << setw(5) << left << v[i].getSale() << setw(5) << left << v[i].getCount()
-                << setw(8) << left << v[i].getProfits() << setw(8) << left << v[i].getPersentage() << endl;
+        outFile <<"ID: "<< v[i].getID() << " "  <<"BarCode: "<< setw(14) << left << v[i].getBCODE() << " Name: " << setw(15) << left << v[i].getName()
+                << " Price: "<< setw(8) << left << v[i].getPrice()  <<" Sale: " << setw(8) << left<< v[i].getSale()  <<" Count: " << setw(6) << left << v[i].getCount()
+                 <<"Sold "<< setw(8) << left << v[i].getSaleCounts() <<" Profits: " << setw(8) << left<< v[i].getProfits()  <<" Persentage: "<< v[i].getPersentage() <<"%"<< endl;
     }
     outFile << "Total Profits: " <<totalProfits<<endl;
-    outFile << "Total Persentage: " <<totalPersentage<<endl;
+    outFile << "Total Persentage: " <<totalPersentage<<"%"<<endl;
 }
 void printUser(vector<User> v){
     for(int i = 0 ; i < (signed)v.size();i++){
@@ -292,7 +301,7 @@ int barCodeMatch(string b, vector<User> v){
 double getProfitsForTotalProducts (vector<User> v){
     double sum = 0.0;
     for(int i = 0 ; i < (signed)v.size() ; i++){
-        v[i].setProfits(v[i].calSaleProfits());
+       v[i].calSaleProfits();
         sum += v[i].calSaleProfits();
         cout<<"1"<<endl;
         printUser(v);
@@ -300,24 +309,24 @@ double getProfitsForTotalProducts (vector<User> v){
     return sum;
 }
 
-double getPersentageForTotalProducts (vector<User> v){
+double getPersentageForTotalProducts (vector<User> v, double tProducts){
     double persen = 0.0;
     
     for(int i = 0 ; i < (signed)v.size() ; i++){
-        v[i].setPersentage(v[i].calSaleProfitsPersentage());
+        v[i].calSaleProfitsPersentage();
         cout<<"2"<<endl;
         printUser(v);
     }
-    persen = getProfitsForTotalProducts (v) * totalCount(v) /  totalPrice(v) * 100;
+    persen = tProducts * totalSold(v) /  totalPrice(v) * 100;
     return persen;
 }
 
 //Helper Functions
-int totalCount (vector<User> v){
+int totalSold (vector<User> v){
     int sumCount = 0;
     for(int i = 0 ; i < (signed)v.size() ; i++){
         
-        sumCount += v[i].getCount();
+        sumCount += v[i].getSaleCounts();
     }
     return sumCount;
 }
