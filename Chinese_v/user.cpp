@@ -53,7 +53,6 @@ void User::increaseCount(){
 }
 void User::decreaseCount(){
     count--;
-    cout<<count<<endl;
 	saleCounts++;
 }
 void User::setCount(int num){
