@@ -1,0 +1,3 @@
+ID: 0 BarCode: 123            Name: qqq             Price: 1        Sale: 2        Count: 90    Sold 10       Profits: 1        Persentage: 100%
+Total Profits: 10
+Total Persentage: 10000%
